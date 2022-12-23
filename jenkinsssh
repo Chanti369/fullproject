@@ -1,0 +1,21 @@
+pipeline{
+    agent{
+        node{
+            label 'devcluster'
+        }
+    }
+    stages{
+        stage('Git checkout'){
+            steps{
+                script{
+                    git branch: 'main', url: 'https://github.com/Chanti369/fullproject.git'
+                }
+            }
+        }
+        stage('ssh connection'){
+            sshagent(['awskeypair']) {
+                sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
+            }
+        }
+    }
+}
