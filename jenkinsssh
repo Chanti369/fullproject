@@ -22,7 +22,7 @@ pipeline{
                 script{
                     sshagent(['awskeypair']) {
                         sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
-                        sh 'scp -r /var/lib/jenkins/workspace/ssh/ ec2-user@172.31.45.111:/home/ec2-user/'
+                        sh 'scp -r /var/lib/jenkins/workspace/ssh/* ec2-user@172.31.45.111:/home/ec2-user/'
                     }
                 }
             }
