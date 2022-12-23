@@ -41,8 +41,8 @@ pipeline{
                 sh "helm repo update ${params.reponame}"
                 sh "helm install ${params.releasename} ${params.reponame}/${params.chartname}"
             }
-            }
-            stage('helm uninstall'){
+        }
+        stage('helm uninstall'){
                 when { expression { params.action == "destroy"}}
                 def apply = false
                 try{
@@ -56,7 +56,7 @@ pipeline{
                 if(apply){
                     sh "helm uninstall ${params.releasename}"
                 }
-            }
         }
+            
     }
 }
