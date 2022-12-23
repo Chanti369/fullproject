@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: ssh
+  become: true
+  become_user: ec2-user
+  tasks:
+    - name: "check if helm path exists or not"
+      stat: path=/usr/local/bin/helm
+      register: result
+    - name: "install helm"
+      command: wget https://get.helm.sh/helm-v3.10.3-linux-amd64.tar.gz
+      when: not result.stat.exists
+    - name: "untar helm"
+      command: tar -xvf helm-v3.10.3-linux-amd64.tar.gz
+      when: not result.stat.exists
+    - name: "mv helm"
+      command: mv linux-amd64/helm /usr/local/bin/helm
+      when: not result.stat.exists
+    - name: "add helm repo"
+      command: helm repo add bitnami https://charts.bitnami.com/bitnami
+    - name: "update repo"
+      command: helm repo update bitnami    

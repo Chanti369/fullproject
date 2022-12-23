@@ -1,0 +1,62 @@
+pipeline{
+    parameters{
+        choice(name: 'action', choices: 'create\ndestroy', description: 'here you can create or destroy the helm chart')
+        string(name: 'clustername', defaultValue: 'devcluster', description: 'here you can mention the cluster name')
+        string(name: 'reponame', defaultValue: 'bitnami', description: 'here you can represnt the helm repo')
+        string(name: 'chartname', defaultValue: 'jenkins', description: 'here you can mention the chart name')
+        string(name: 'releasename', defaultValue: 'myrelease', description: 'here you can mention the releasename')
+    }
+    agent{
+        node{
+            label "${params.clustername}"
+        }
+    }
+    stages{
+        stage('git checkout'){
+            steps{
+                script{
+                    git branch: 'main', url: 'https://github.com/Chanti369/fullproject.git'
+                }
+            }
+        }
+        stage('playbook'){
+            steps{
+                script{
+                    sh 'ansible-playbook ansible1.yml'
+                }
+            }
+        }
+        stage('helm install chart'){
+            when { expression { params.action == 'create'}}
+            def apply = false
+            try{
+                input message: "do you want to apply this chart", ok: "yes, apply"
+                apply = true
+            }
+            catch(err){
+                apply = false
+                currentBuild.result = 'ABORTED'
+            }
+            if(apply){
+                sh "helm repo update ${params.reponame}"
+                sh "helm install ${params.releasename} ${params.reponame}/${params.chartname}"
+            }
+            }
+            stage('helm uninstall'){
+                when { expression { params.action == "destroy"}}
+                def apply = false
+                try{
+                    input message: "are you sure you want to uninstall", ok: "yes, delete"
+                    apply = true
+                }
+                catch(err){
+                    apply = false
+                    currentBuild.result = 'ABORTED'
+                }
+                if(apply){
+                    sh "helm uninstall ${params.releasename}"
+                }
+            }
+        }
+    }
+}
