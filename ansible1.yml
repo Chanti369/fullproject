@@ -15,6 +15,7 @@
       when: not result.stat.exists
     - name: "mv helm"
       command: sudo mv linux-amd64/helm /usr/local/bin/helm
+      when: not result.stat.exists
     - name: "add helm repo"
       command: helm repo add bitnami https://charts.bitnami.com/bitnami
     - name: "update repo"
