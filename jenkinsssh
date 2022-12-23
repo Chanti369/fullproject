@@ -13,8 +13,12 @@ pipeline{
             }
         }
         stage('ssh connection'){
-            sshagent(['awskeypair']) {
-                sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
+            steps{
+                script{
+                   sshagent(['awskeypair']) {
+                      sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
+                   }
+                }
             }
         }
     }
