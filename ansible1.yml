@@ -14,8 +14,7 @@
       command: tar -xvf helm-v3.10.3-linux-amd64.tar.gz
       when: not result.stat.exists
     - name: "mv helm"
-      command: mv linux-amd64/helm /usr/local/bin/helm
-      when: not result.stat.exists
+      command: sudo mv linux-amd64/helm /usr/local/bin/helm
     - name: "add helm repo"
       command: helm repo add bitnami https://charts.bitnami.com/bitnami
     - name: "update repo"
