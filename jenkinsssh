@@ -37,5 +37,15 @@ pipeline{
                 }
             }
         }
+        stage('helm install'){
+            steps{
+                script{
+                    sshagent(['awskeypair']) {
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111 helm install myrelease bitnami/tomcat'
+                    }
+                }
+            }
+        }
     }
 }
