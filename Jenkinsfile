@@ -61,6 +61,19 @@ pipeline{
                 }
             }
         }
+        stage('docker push image'){
+            steps{
+                script{
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-cred', passwordVariable: 'dockerpassword', usernameVariable: 'dockerusername')]) {
+                        sh 'docker login -u $dockerusername -p $dockerpassword'
+                        sh 'docker push $dockerusername/$JOB_NAME:v1.$BUILD_ID'
+                        sh 'docker push $dockerusername/$JOB_NAME:latest'
+                        sh 'docker rmi -f $dockerusername/$JOB_NAME:v1.$BUILD_ID'
+                        sh 'docker rmi -f $dockerusername/$JOB_NAME:latest'
+                    }
+                }
+            }
+        }
     }
     post {
 		always {
