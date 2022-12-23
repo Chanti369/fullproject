@@ -38,6 +38,16 @@ pipeline{
                 }
             }
         }
+        stage('nexus artifact uploader'){
+            steps{
+                script{
+                    def readpom = readMavenPom file: 'pom.xml'
+                    def readversion = readpom.version
+                    def readrepo = readversion.endsWith("SNAPSHOT") ? "fullproject-snapshot" : "fullproject-release"
+                    nexusArtifactUploader artifacts: [[artifactId: 'devops-integration', classifier: '', file: 'target/devops-integration.jar', type: 'jar']], credentialsId: 'nexus', groupId: 'com.javatechie', nexusUrl: '3.109.5.142:8081', nexusVersion: 'nexus3', protocol: 'http', repository: readrepo, version: readversion
+                }
+            }
+        }
     }
     post {
 		always {
