@@ -22,6 +22,22 @@ pipeline{
                 }
             }
         }
+        stage('static code analysis'){
+            steps{
+                script{
+                    withSonarQubeEnv(credentialsId: 'sonarqube-token') {
+                        sh 'mvn clean install sonar:sonar'
+                    }
+                }
+            }
+        }
+        stage('Quality gate'){
+            steps{
+                script{
+                    waitForQualityGate abortPipeline: false, credentialsId: 'sonarqube-token'
+                }
+            }
+        }
     }
     post {
 		always {
