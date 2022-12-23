@@ -1,9 +1,5 @@
 pipeline{
-    agent{
-        node{
-            label 'devcluster'
-        }
-    }
+    agent any
     stages{
         stage('Git checkout'){
             steps{
@@ -18,6 +14,16 @@ pipeline{
                    sshagent(['awskeypair']) {
                       sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
                    }
+                }
+            }
+        }
+        stage('copy files'){
+            steps{
+                script{
+                    sshagent(['awskeypair']) {
+                        sh 'ssh -o StrictHostKeyChecking=no ec2-user@172.31.45.111'
+                        sh 'scp -r /var/lib/jenkins/workspace/ssh/ ec2-user@172.31.45.111/home/ec2-user/'
+                    }
                 }
             }
         }
